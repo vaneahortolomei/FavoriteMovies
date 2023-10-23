@@ -1,0 +1,5 @@
+.items-list {
+    &__item + .items-list__item {
+        margin-top: 20px;
+    }
+}

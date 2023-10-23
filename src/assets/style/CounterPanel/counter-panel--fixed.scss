@@ -1,0 +1,9 @@
+.counter-panel.counter-panel--fixed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border-top-right-radius: var(--border-radius);
+    border-top-left-radius: var(--border-radius);
+    box-shadow: 0 4px 12px rgba(255, 177, 10, 0.3);
+}

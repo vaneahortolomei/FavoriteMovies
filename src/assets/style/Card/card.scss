@@ -1,0 +1,14 @@
+.card {
+    &__details {
+        display: flex;
+        justify-content: space-between;
+    }
+    &__rating {
+        padding: 20px;
+        text-align: center;
+    }
+    &__description {
+        padding: 20px;
+        text-align: left;
+    }
+}

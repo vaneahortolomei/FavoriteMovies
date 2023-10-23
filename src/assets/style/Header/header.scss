@@ -1,0 +1,22 @@
+.header {
+    background-color: var(--red-color);
+    //padding: 0 20px;
+    &__panel {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        min-height: var(--min-height);
+    }
+    &__navigation {
+        display: flex;
+        align-items: center;
+    }
+    &__result {
+        color: var(--white-color);
+    }
+    &__search {
+        min-width: 300px;
+        width: 100%;
+        padding: 0 20px;
+    }
+}

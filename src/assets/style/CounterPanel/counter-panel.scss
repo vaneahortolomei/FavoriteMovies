@@ -1,0 +1,17 @@
+.counter-panel {
+    padding: 20px;
+    background-color: var(--yellow-color);
+    color: var(--black-color);
+    overflow: auto;
+    &__title {
+        font-weight: var(--font-weight);
+        margin-bottom: 10px;
+    }
+    &__options {
+        display: flex;
+        justify-content: space-between;
+    }
+    &__option {
+        font-weight: var(--font-weight);
+    }
+}
