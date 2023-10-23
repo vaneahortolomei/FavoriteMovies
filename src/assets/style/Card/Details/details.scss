@@ -1,0 +1,27 @@
+.details {
+    &__img-wrapper {
+        width: 200px;
+    }
+
+    &__img {
+        height: auto;
+    }
+
+    &__details {
+        padding: 20px;
+    }
+
+    &__title {
+        font-weight: var(--font-weight);
+        margin-bottom: 10px;
+    }
+
+    &__timing, &__rating, &__genre {
+        color: var(--gray-color);
+        font-size: var(--font-small-size);
+
+        &:not(:last-child) {
+            margin-bottom: 10px;
+        }
+    }
+}

@@ -1,4 +1,17 @@
 @import "variables";
+@import "Header/index";
+@import "Logo/index";
+@import "Footer/index";
+@import "FormControl/index";
+@import "Container/index";
+@import "Item/index";
+@import "Items-list/index";
+@import "Box/index";
+@import "Columns/index";
+@import "CounterPanel/index";
+@import "Card/index";
+@import "Search/index";
+@import "Card/Details/index";
 
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
