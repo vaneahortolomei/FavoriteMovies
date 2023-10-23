@@ -7,7 +7,7 @@ export default function Footer() {
             <div className="container">
                 <Logo
                     className={'footer__logo'}
-                    imageSrc={'/public/logo.svg'}/>
+                    imageSrc={'./logo.svg'}/>
             </div>
         </footer>
     )
