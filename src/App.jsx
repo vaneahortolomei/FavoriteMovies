@@ -16,7 +16,7 @@ function App() {
                                 <ul className="items-list">
                                     <li className="items-list__item item">
                                         <div className="item__img-wrapper">
-                                            <img src="/public/poster.jpg" alt="" className="item__img"/>
+                                            <img src="./poster.jpg" alt="" className="item__img"/>
                                         </div>
                                         <div className="item__header">
                                             <p className="item__title">Inception</p>
@@ -25,7 +25,7 @@ function App() {
                                     </li>
                                     <li className="items-list__item item">
                                         <div className="item__img-wrapper">
-                                            <img src="/public/poster.jpg" alt="" className="item__img"/>
+                                            <img src="./poster.jpg" alt="" className="item__img"/>
                                         </div>
                                         <div className="item__header">
                                             <p className="item__title">Inception</p>
@@ -73,7 +73,7 @@ function Header() {
                     <div className="header__navigation">
                         <Logo
                             className={'header__logo'}
-                            imageSrc={'/public/logo.svg'}
+                            imageSrc={'./logo.svg'}
                         />
                         <Search className={'header__search'}/>
                     </div>
@@ -103,7 +103,7 @@ function Card() {
         <div className="card">
             <div className="card__details details">
                 <div className="details__img-wrapper">
-                    <img src="/public/poster.jpg" alt="" className="details__img"/>
+                    <img src="./poster.jpg" alt="" className="details__img"/>
                 </div>
                 <div className="details__details">
                     <h2 className="details__title">Inception</h2>
