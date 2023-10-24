@@ -57,7 +57,9 @@ function App() {
                                         <Card
                                             selectedId={selectedId}
                                             onAddWatched={handleAddWatchMovie}
-                                            onCloseMovie={handleCloseMovie}/> :
+                                            onCloseMovie={handleCloseMovie}
+                                            watched={watched}
+                                        /> :
 
                                         <>
                                             <CounterPanel className={'counter-panel--fixed'}/>
@@ -172,19 +174,28 @@ function CounterPanel({className}) {
 }
 
 function WatchedMovieslList({watched}) {
-    return (
-        <ItemsList>
-            {watched.map(item => (
-                <WatchedItem
-                    item={item}
-                    key={item.imdbRating}
-                />
-            ))}
-        </ItemsList>
-    )
+    if(watched && watched.length > 0){
+        return (
+            <ItemsList>
+                {watched.map(item => (
+                    <WatchedItem
+                        item={item}
+                        key={item.imdbID}
+                    />
+                ))}
+            </ItemsList>
+        )
+    }else {
+        return (
+            <div className="notification">
+                <p className="notification__text">Watched list is empty!</p>
+            </div>
+        )
+    }
 }
 
 function WatchedItem({item}) {
+
     return (
         <li className="items-list__item item">
             <div className="item__img-wrapper">
@@ -194,7 +205,7 @@ function WatchedItem({item}) {
                 <p className="item__title">{item.title}</p>
                 <div className="item__options">
                     <p>{item.imdbRating}</p>
-                    <p>8</p>
+                    <p>{item.userRating}</p>
                     <p>{item.runtime}</p>
                 </div>
             </div>
@@ -202,9 +213,14 @@ function WatchedItem({item}) {
     )
 }
 
-function Card({selectedId, onCloseMovie, onAddWatched}) {
+function Card({selectedId, onCloseMovie, onAddWatched, watched}) {
     const [movie, setMovie] = useState({});
     const [loading, setLoading] = useState(true);
+    const [userRating, setUserRating] = useState('');
+
+
+    const isMovieWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
+
 
     const {
         Title: title,
@@ -219,11 +235,13 @@ function Card({selectedId, onCloseMovie, onAddWatched}) {
 
     function handleAdd() {
         const newWatchMovie = {
-            imdbRating,
+            imdbID: selectedId,
             title,
             poster,
+            imdbRating,
             year,
-            runtime
+            runtime,
+            userRating
         };
 
         onAddWatched(newWatchMovie);
@@ -270,16 +288,26 @@ function Card({selectedId, onCloseMovie, onAddWatched}) {
                     <p className="details__rating">IMDb: {imdbRating}</p>
                 </div>
             </div>
-            <StarRating
-                maxRating={10}
-                className={'card__rating'}
-            />
-            <BasicButton
-                onClick={handleAdd}
-                type={'button'}
-                name={'+ Add to list'}
-                className={'card__button button--yellow'}
-            />
+            {!isMovieWatched ?
+                <>
+                    <StarRating
+                        maxRating={10}
+                        className={'card__rating'}
+                        onSetRating={setUserRating}
+                    />
+                    <BasicButton
+                        onClick={handleAdd}
+                        type={'button'}
+                        name={'+ Add to list'}
+                        className={'card__button button--yellow'}
+                    />
+                </> :
+
+                <div className="card__notification notification">
+                    <p className="notification__text">You rated with movie!</p>
+                </div>
+
+            }
             <div className="card__description description">
                 <p className="description__text">{plot}</p>
             </div>
