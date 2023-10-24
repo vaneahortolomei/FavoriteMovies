@@ -1,42 +1,66 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import Box from "./Components/Box.jsx";
 import Footer from "./Components/Footer.jsx";
-import Logo from "./Components/Logo.jsx";
+import Header from "./Components/Header.jsx";
+import ItemsList from "./Components/ItemList.jsx";
+import {getMoviesByTitle, getMoviesByiD, staticTopList} from "../src/assets/api.js";
 
 function App() {
+    const [query, setQuery] = useState('');
+    const [selectedId, setSelectedId] = useState(null);
+    const [watched, setWatchMovie] = useState(function () {
+        const storeValue = localStorage.getItem('watched');
+        try {
+            return storeValue ? JSON.parse(storeValue) : [];
+        } catch (error) {
+            console.error("Error parsing localStorage 'watched' value:", error);
+            return [];
+        }
+    });
+
+    function handleItem(id) {
+        setSelectedId((selectedId) => id === selectedId ? null : id);
+    }
+
+    function handleCloseMovie() {
+        setSelectedId(null)
+    }
+
+    function handleAddWatchMovie(movie) {
+        setWatchMovie((watched) => [...watched, movie])
+    }
+
+    useEffect(() => {
+        localStorage.setItem('watched', JSON.stringify(watched));
+    }, [watched]);
 
     return (
         <div className="wrapper">
-            <Header/>
+            <Header query={query} setQuery={setQuery}/>
             <div className="content">
                 <main>
                     <div className="container">
                         <section className="columns">
                             <Box className={'columns__box'}>
-                                <ul className="items-list">
-                                    <li className="items-list__item item">
-                                        <div className="item__img-wrapper">
-                                            <img src="./poster.jpg" alt="" className="item__img"/>
-                                        </div>
-                                        <div className="item__header">
-                                            <p className="item__title">Inception</p>
-                                            <span className="item__year">2014</span>
-                                        </div>
-                                    </li>
-                                    <li className="items-list__item item">
-                                        <div className="item__img-wrapper">
-                                            <img src="./poster.jpg" alt="" className="item__img"/>
-                                        </div>
-                                        <div className="item__header">
-                                            <p className="item__title">Inception</p>
-                                            <span className="item__year">2014</span>
-                                        </div>
-                                    </li>
-                                </ul>
+                                <GetListOfData
+                                    query={query}
+                                    onShowDetails={handleItem}
+                                />
                             </Box>
                             <Box className={'columns__box box--watched-list'}>
-                                {/*<CounterPanel className={'counter-panel--fixed'}/>*/}
-                                <Card/>
+                                {
+                                    selectedId ?
+                                        <Card
+                                            selectedId={selectedId}
+                                            onAddWatched={handleAddWatchMovie}
+                                            onCloseMovie={handleCloseMovie}/> :
+
+                                        <>
+                                            <CounterPanel className={'counter-panel--fixed'}/>
+                                            <WatchedMovieslList watched={watched}/>
+                                        </>
+
+                                }
                             </Box>
                         </section>
                     </div>
@@ -47,41 +71,87 @@ function App() {
     )
 }
 
-function Search({className}) {
-    return (
-        <div className={`${className} search`}>
-            <label form="text" className="search__label"/>
-            <input className="input search__input" placeholder="Search..." type="text" name="text" id="text"/>
-        </div>
-    )
-}
 
-function Results({className}) {
+function Item({item, onShowDetails}) {
     return (
-        <div className={`${className} results`}>
-            <span className="results__count">Found <strong>11</strong> movies</span>
-        </div>
-    )
-}
-
-
-function Header() {
-    return (
-        <header className="header">
-            <div className="container">
-                <div className="header__panel">
-                    <div className="header__navigation">
-                        <Logo
-                            className={'header__logo'}
-                            imageSrc={'./logo.svg'}
-                        />
-                        <Search className={'header__search'}/>
-                    </div>
-                    <Results className={'header__result'}/>
-                </div>
+        <li onClick={() => onShowDetails(item.imdbID)} className="items-list__item item">
+            <div className="item__img-wrapper">
+                <img src={item.Poster} alt={item.Title} className="item__img"/>
             </div>
-        </header>
+            <div className="item__header">
+                <p className="item__title">{item.Title}</p>
+                <span className="item__year">{item.Year}</span>
+            </div>
+        </li>
     )
+}
+
+
+
+function GetListOfData({query, onShowDetails}) {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+
+    useEffect(() => {
+
+        const moviesData = async () => {
+            const response = await getMoviesByTitle(query);
+
+            if (!response.ok) throw new Error('Failed to fetch data');
+
+            try {
+                const data = await response.json();
+
+                setData(data.Search);
+                setLoading(false);
+            } catch (e) {
+                console.error(e.message);
+
+            } finally {
+                setLoading(false);
+            }
+
+
+            if (!query.length) {
+                setData([]);
+            }
+        };
+
+
+        moviesData();
+
+    }, [query]);
+
+
+    if (loading) return <div>Loading...</div>
+
+
+    if (data && data.length !== 0) {
+        return (
+            <ItemsList>
+                {data.map((item, index) => (
+                    <Item
+                        item={item}
+                        key={index}
+                        onShowDetails={onShowDetails}
+                    />
+                ))}
+            </ItemsList>
+        )
+    } else {
+        return (
+            <ItemsList>
+                {staticTopList.map((item, index) => (
+                    <Item
+                        item={item}
+                        key={index}
+                        onShowDetails={onShowDetails}
+                    />
+                ))}
+            </ItemsList>
+        )
+    }
 }
 
 function CounterPanel({className}) {
@@ -98,28 +168,109 @@ function CounterPanel({className}) {
     )
 }
 
-function Card() {
+function WatchedMovieslList({watched}){
+    return (
+        <ItemsList>
+            {watched.map(item => (
+                <WatchedItem
+                    item={item}
+                    key={item.imdbRating}
+                />
+            ))}
+        </ItemsList>
+    )
+}
+
+function WatchedItem({item}){
+    return (
+        <li className="items-list__item item">
+            <div className="item__img-wrapper">
+                <img src={item.poster} alt={item.title} className="item__img"/>
+            </div>
+            <div className="item__header">
+                <p className="item__title">{item.title}</p>
+                <div className="item__options">
+                    <p>imdbRating:{item.imdbRating}</p>
+                    <p>8</p>
+                    <p>{item.runtime}</p>
+                </div>
+            </div>
+        </li>
+    )
+}
+
+function Card({selectedId, onCloseMovie, onAddWatched}) {
+    const [movie, setMovie] = useState({});
+    const [loading, setLoading] = useState(true);
+
+    const {
+        Title: title,
+        Year: year,
+        Poster: poster,
+        imdbRating,
+        Actors: actors,
+        Genre: genre,
+        Plot: plot,
+        Runtime: runtime,
+    } = movie;
+
+    function handleAdd() {
+        const newWatchMovie = {
+            imdbRating,
+            title,
+            poster,
+            year,
+            runtime
+        };
+
+        onAddWatched(newWatchMovie);
+        onCloseMovie();
+    }
+
+    useEffect(() => {
+        const getMovieById = async () => {
+            const response = await getMoviesByiD(selectedId);
+            if (!response.ok) throw new Error('Failed to fetch data');
+
+            try {
+                const data = await response.json();
+                setMovie(data);
+                setLoading(false)
+            } catch (e) {
+                throw new Error(e.message);
+            } finally {
+                setLoading(false)
+            }
+        };
+
+        getMovieById()
+    }, [selectedId]);
+
+    if (loading) return <div>Loading...</div>
+
     return (
         <div className="card">
+            <button onClick={onCloseMovie}>
+                Back
+            </button>
             <div className="card__details details">
                 <div className="details__img-wrapper">
-                    <img src="./poster.jpg" alt="" className="details__img"/>
+                    <img src={poster} alt={title} className="details__img"/>
                 </div>
                 <div className="details__details">
-                    <h2 className="details__title">Inception</h2>
-                    <p className="details__timing">07 Dec 2014 - 115 min</p>
-                    <p className="details__genre">Animation, Sci-fi</p>
-                    <p className="details__rating">IMDb rating</p>
+                    <h2 className="details__title">Title: {title}</h2>
+                    <p className="details__timing">Year: {year}</p>
+                    <p className="details__genre">Genre: {genre}</p>
+                    <p className="details__rating">IMDb: {imdbRating}</p>
                 </div>
             </div>
             <div className="card__rating rating">
                 rating
+
+                <button onClick={handleAdd}>AddMovie</button>
             </div>
             <div className="card__description description">
-                <p className="description__text">
-                    When Earth becomes uninhabitable in the future, a farmer and ex-NASA
-                    pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a
-                    new planet for humans.</p>
+                <p className="description__text">{plot}</p>
             </div>
         </div>
     )
