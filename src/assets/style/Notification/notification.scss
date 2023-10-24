@@ -1,0 +1,10 @@
+.notification {
+    padding: 20px;
+    text-align: center;
+    &__text {
+        background-color: var(--background);
+        padding: 10px 0;
+        border-radius: var(--border-radius);
+        font-weight: var(--font-weight);
+    }
+}
