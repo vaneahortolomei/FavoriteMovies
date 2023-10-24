@@ -1,7 +1,7 @@
 .box.box--watched-list {
     position: relative;
     padding: 0;
-
+    overflow: hidden;
     .items-list {
         padding: 20px;
     }

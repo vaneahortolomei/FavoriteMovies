@@ -1,0 +1,31 @@
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: var(--font-weight);
+    color: var(--black-color);
+    background-color: var(--white-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    border: 1px solid transparent;
+
+    &:hover {
+        background-color: #9aa7b4;
+    }
+
+    &:active {
+        background-color: #9aa7b4;
+    }
+
+    &:disabled {
+        background-color: #c0c0c0;
+        cursor: not-allowed;
+    }
+
+    &:focus {
+        outline: none;
+        border: 1px solid var(--black-color);
+    }
+}
