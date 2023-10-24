@@ -10,9 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "prop-types": "latest",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-      "prop-types": "latest"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
