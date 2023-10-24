@@ -11,4 +11,8 @@
         padding: 20px;
         text-align: left;
     }
+    &__button {
+        display: flex!important;
+        margin: 15px auto;
+    }
 }

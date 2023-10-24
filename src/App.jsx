@@ -4,8 +4,11 @@ import Footer from "./Components/Footer.jsx";
 import Header from "./Components/Header.jsx";
 import ItemsList from "./Components/ItemList.jsx";
 import {getMoviesByTitle, getMoviesByiD, staticTopList} from "../src/assets/api.js";
+import BasicButton from "./Components/Button/Button.jsx";
+import StarRating from "./Components/StarRating/StarRating.jsx";
 
 function App() {
+    const [moviesData, setMoviesData] = useState([]);
     const [query, setQuery] = useState('');
     const [selectedId, setSelectedId] = useState(null);
     const [watched, setWatchMovie] = useState(function () {
@@ -36,7 +39,7 @@ function App() {
 
     return (
         <div className="wrapper">
-            <Header query={query} setQuery={setQuery}/>
+            <Header query={query} setQuery={setQuery} movieCount={moviesData.length}/>
             <div className="content">
                 <main>
                     <div className="container">
@@ -45,6 +48,7 @@ function App() {
                                 <GetListOfData
                                     query={query}
                                     onShowDetails={handleItem}
+                                    setMoviesData={setMoviesData}
                                 />
                             </Box>
                             <Box className={'columns__box box--watched-list'}>
@@ -87,8 +91,7 @@ function Item({item, onShowDetails}) {
 }
 
 
-
-function GetListOfData({query, onShowDetails}) {
+function GetListOfData({query, onShowDetails, setMoviesData}) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -121,7 +124,7 @@ function GetListOfData({query, onShowDetails}) {
 
         moviesData();
 
-    }, [query]);
+    }, [query, setMoviesData]);
 
 
     if (loading) return <div>Loading...</div>
@@ -168,7 +171,7 @@ function CounterPanel({className}) {
     )
 }
 
-function WatchedMovieslList({watched}){
+function WatchedMovieslList({watched}) {
     return (
         <ItemsList>
             {watched.map(item => (
@@ -181,7 +184,7 @@ function WatchedMovieslList({watched}){
     )
 }
 
-function WatchedItem({item}){
+function WatchedItem({item}) {
     return (
         <li className="items-list__item item">
             <div className="item__img-wrapper">
@@ -190,7 +193,7 @@ function WatchedItem({item}){
             <div className="item__header">
                 <p className="item__title">{item.title}</p>
                 <div className="item__options">
-                    <p>imdbRating:{item.imdbRating}</p>
+                    <p>{item.imdbRating}</p>
                     <p>8</p>
                     <p>{item.runtime}</p>
                 </div>
@@ -250,25 +253,33 @@ function Card({selectedId, onCloseMovie, onAddWatched}) {
 
     return (
         <div className="card">
-            <button onClick={onCloseMovie}>
-                Back
-            </button>
+            <BasicButton
+                onClick={onCloseMovie}
+                type={'button'}
+                name={'<'}
+                className={'button--back'}
+            />
             <div className="card__details details">
                 <div className="details__img-wrapper">
                     <img src={poster} alt={title} className="details__img"/>
                 </div>
                 <div className="details__details">
-                    <h2 className="details__title">Title: {title}</h2>
+                    <h2 className="details__title">{title}</h2>
                     <p className="details__timing">Year: {year}</p>
                     <p className="details__genre">Genre: {genre}</p>
                     <p className="details__rating">IMDb: {imdbRating}</p>
                 </div>
             </div>
-            <div className="card__rating rating">
-                rating
-
-                <button onClick={handleAdd}>AddMovie</button>
-            </div>
+            <StarRating
+                maxRating={10}
+                className={'card__rating'}
+            />
+            <BasicButton
+                onClick={handleAdd}
+                type={'button'}
+                name={'+ Add to list'}
+                className={'card__button button--yellow'}
+            />
             <div className="card__description description">
                 <p className="description__text">{plot}</p>
             </div>

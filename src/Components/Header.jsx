@@ -3,7 +3,8 @@ import Logo from "./Logo.jsx";
 import Search from "../Components/Search.jsx";
 import Results from "../Components/Results.jsx";
 
-export default function Header({query, setQuery}) {
+export default function Header({query, setQuery, movieCount}) {
+
     return (
         <header className="header">
             <div className="container">
@@ -18,7 +19,7 @@ export default function Header({query, setQuery}) {
                             query={query}
                             setQuery={setQuery}/>
                     </div>
-                    <Results className={'header__result'}/>
+                    <Results className={'header__result'} movieCount={movieCount}/>
                 </div>
             </div>
         </header>

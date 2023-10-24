@@ -1,0 +1,7 @@
+.button.button--yellow {
+    background-color: var(--yellow-color);
+
+    &:hover {
+        background-color: #ffc03a;
+    }
+}

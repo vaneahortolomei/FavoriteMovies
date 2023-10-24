@@ -1,0 +1,11 @@
+.star-rating {
+    &__stars {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    &__count {
+        margin-left: 10px;
+        font-weight: var(--font-weight);
+    }
+}
