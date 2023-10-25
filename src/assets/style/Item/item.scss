@@ -5,6 +5,12 @@
     padding: 20px;
     cursor: pointer;
     position: relative;
+    transition: background-color 0.2s;
+    @media(min-width: 1024px){
+        &:hover {
+            background-color: #34434d;
+        }
+    }
     &__header {
         flex: 1;
     }
