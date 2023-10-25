@@ -12,7 +12,7 @@ export default function Search({className, query, setQuery}) {
                 value={query}
                 placeholder="Search..."
                 name="search"
-                onChange={e => setQuery(e.target.value)}
+                onChange={(e) => setQuery(e.target.value)}
                 id="search"
             />
         </div>

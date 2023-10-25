@@ -2,7 +2,22 @@
     position: relative;
     padding: 0;
     overflow: hidden;
+    order: 1;
+    @media (min-width: 1024px) {
+        order: 2;
+        position: sticky;
+        top: 20px;
+    }
+
     .items-list {
         padding: 20px;
+    }
+    .items-list--height {
+        overflow-y: scroll;
+        -ms-overflow-y: scroll;
+        height: 300px;
+        @media(min-width: 1024px){
+            height: 500px;
+        }
     }
 }

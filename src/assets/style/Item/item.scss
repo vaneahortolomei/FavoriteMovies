@@ -6,7 +6,7 @@
     cursor: pointer;
     position: relative;
     &__header {
-        flex: 1 1 auto;
+        flex: 1;
     }
 
     &__img-wrapper {
@@ -17,10 +17,19 @@
     &__img {
         height: auto;
     }
+    &__text {
+        font-size: 14px;
+        @media(min-width: 768px){
+            font-size: 16px;
+        }
+    }
 
     &__title {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: var(--font-weight);
+        @media(min-width: 768px){
+            font-size: 18px;
+        }
     }
 
     &__year {
@@ -28,11 +37,40 @@
         color: var(--gray-color)
     }
     &__options {
-        display: flex;
-        justify-content: space-between;
         margin-top: 10px;
         p {
             font-weight: var(--font-weight);
         }
+        @media(min-width: 768px){
+            display: flex;
+        }
+        @media(min-width: 1024px){
+            justify-content: space-between;
+        }
+    }
+    &__option {
+        display: flex;
+        align-items: center;
+        @media(max-width: 767px){
+             + .item__option {
+                 margin-top: 10px;
+             }
+        }
+        @media(min-width: 768px){
+            + .item__option {
+                margin-left: 15px;
+            }
+        }
+        @media(min-width: 1024px){
+            + .item__option {
+                margin-left: 0;
+            }
+        }
+
+    }
+    &__icon {
+        width: 10px;
+        height: 10px;
+        margin-right: 5px;
     }
 }

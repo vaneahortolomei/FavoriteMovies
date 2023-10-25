@@ -1,6 +1,9 @@
 .details {
     &__img-wrapper {
         width: 200px;
+        @media(min-width: 1024px) {
+            flex: 1;
+        }
     }
 
     &__img {
@@ -9,11 +12,14 @@
 
     &__details {
         padding: 20px;
+        @media(min-width: 1024px) {
+            flex: 1;
+        }
     }
-
     &__title {
         font-weight: var(--font-weight);
         margin-bottom: 10px;
+        font-size: 16px;
     }
 
     &__timing, &__rating, &__genre {

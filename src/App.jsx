@@ -3,15 +3,19 @@ import Box from "./Components/Box.jsx";
 import Footer from "./Components/Footer.jsx";
 import Header from "./Components/Header.jsx";
 import ItemsList from "./Components/ItemList.jsx";
-import {getMoviesByTitle, getMoviesByiD, staticTopList} from "../src/assets/api.js";
-import BasicButton from "./Components/Button/Button.jsx";
-import StarRating from "./Components/StarRating/StarRating.jsx";
+import useMoviesData from "../src/hooks/useMovieData.jsx";
+import {staticTopList} from "../src/data/staticTopList.js";
+import Card from "./Components/Card/Card.jsx";
+import CounterPanel from "./Components/CounterPanel.jsx";
+import Item from "./Components/Item/Item.jsx";
+import WatchedList from "./Components/WatchedList/WatchedList.jsx";
 
 function App() {
     const [moviesData, setMoviesData] = useState([]);
     const [query, setQuery] = useState('');
     const [selectedId, setSelectedId] = useState(null);
     const [watched, setWatchMovie] = useState(function () {
+
         const storeValue = localStorage.getItem('watched');
         try {
             return storeValue ? JSON.parse(storeValue) : [];
@@ -20,6 +24,7 @@ function App() {
             return [];
         }
     });
+
 
     function handleItem(id) {
         setSelectedId((selectedId) => id === selectedId ? null : id);
@@ -62,8 +67,11 @@ function App() {
                                         /> :
 
                                         <>
-                                            <CounterPanel className={'counter-panel--fixed'}/>
-                                            <WatchedMovieslList watched={watched}/>
+                                            <CounterPanel
+                                                className={'counter-panel--fixed'}
+                                                watched={watched}/>
+                                            <WatchedList
+                                                watched={watched}/>
                                         </>
 
                                 }
@@ -78,242 +86,34 @@ function App() {
 }
 
 
-function Item({item, onShowDetails}) {
+const MovieItemsList = ({data, onShowDetails}) => {
     return (
-        <li onClick={() => onShowDetails(item.imdbID)} className="items-list__item item">
-            <div className="item__img-wrapper">
-                <img src={item.Poster} alt={item.Title} className="item__img"/>
-            </div>
-            <div className="item__header">
-                <p className="item__title">{item.Title}</p>
-                <span className="item__year">{item.Year}</span>
-            </div>
-        </li>
+        <ItemsList>
+            {data.map((item, index) => (
+                <Item
+                    item={item}
+                    key={index}
+                    onShowDetails={onShowDetails}
+                />
+            ))}
+        </ItemsList>
     )
 }
-
 
 function GetListOfData({query, onShowDetails, setMoviesData}) {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const {data, loading} = useMoviesData(query, setMoviesData);
 
 
-    useEffect(() => {
+    if (loading) return <div className="loader"/>
 
-        const moviesData = async () => {
-            const response = await getMoviesByTitle(query);
-
-            if (!response.ok) throw new Error('Failed to fetch data');
-
-            try {
-                const data = await response.json();
-
-                setData(data.Search);
-                setLoading(false);
-            } catch (e) {
-                console.error(e.message);
-
-            } finally {
-                setLoading(false);
-            }
-
-
-            if (!query.length) {
-                setData([]);
-            }
-        };
-
-
-        moviesData();
-
-    }, [query, setMoviesData]);
-
-
-    if (loading) return <div>Loading...</div>
-
-
-    if (data && data.length !== 0) {
-        return (
-            <ItemsList>
-                {data.map((item, index) => (
-                    <Item
-                        item={item}
-                        key={index}
-                        onShowDetails={onShowDetails}
-                    />
-                ))}
-            </ItemsList>
-        )
-    } else {
-        return (
-            <ItemsList>
-                {staticTopList.map((item, index) => (
-                    <Item
-                        item={item}
-                        key={index}
-                        onShowDetails={onShowDetails}
-                    />
-                ))}
-            </ItemsList>
-        )
-    }
-}
-
-function CounterPanel({className}) {
-    return (
-        <div className={`counter-panel ${className}`}>
-            <header className="counter-panel__title">Movies you watched</header>
-            <div className="counter-panel__options">
-                <p className="counter-panel__option">0 movies</p>
-                <p className="counter-panel__option">0</p>
-                <p className="counter-panel__option">0</p>
-                <p className="counter-panel__option">0 min</p>
-            </div>
-        </div>
-    )
-}
-
-function WatchedMovieslList({watched}) {
-    if(watched && watched.length > 0){
-        return (
-            <ItemsList>
-                {watched.map(item => (
-                    <WatchedItem
-                        item={item}
-                        key={item.imdbID}
-                    />
-                ))}
-            </ItemsList>
-        )
-    }else {
-        return (
-            <div className="notification">
-                <p className="notification__text">Watched list is empty!</p>
-            </div>
-        )
-    }
-}
-
-function WatchedItem({item}) {
+    const dataList = data && data.length !== 0 ? data : staticTopList;
 
     return (
-        <li className="items-list__item item">
-            <div className="item__img-wrapper">
-                <img src={item.poster} alt={item.title} className="item__img"/>
-            </div>
-            <div className="item__header">
-                <p className="item__title">{item.title}</p>
-                <div className="item__options">
-                    <p>{item.imdbRating}</p>
-                    <p>{item.userRating}</p>
-                    <p>{item.runtime}</p>
-                </div>
-            </div>
-        </li>
+        <MovieItemsList
+            data={dataList}
+            onShowDetails={onShowDetails}
+        />
     )
 }
-
-function Card({selectedId, onCloseMovie, onAddWatched, watched}) {
-    const [movie, setMovie] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [userRating, setUserRating] = useState('');
-
-
-    const isMovieWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
-
-
-    const {
-        Title: title,
-        Year: year,
-        Poster: poster,
-        imdbRating,
-        Actors: actors,
-        Genre: genre,
-        Plot: plot,
-        Runtime: runtime,
-    } = movie;
-
-    function handleAdd() {
-        const newWatchMovie = {
-            imdbID: selectedId,
-            title,
-            poster,
-            imdbRating,
-            year,
-            runtime,
-            userRating
-        };
-
-        onAddWatched(newWatchMovie);
-        onCloseMovie();
-    }
-
-    useEffect(() => {
-        const getMovieById = async () => {
-            const response = await getMoviesByiD(selectedId);
-            if (!response.ok) throw new Error('Failed to fetch data');
-
-            try {
-                const data = await response.json();
-                setMovie(data);
-                setLoading(false)
-            } catch (e) {
-                throw new Error(e.message);
-            } finally {
-                setLoading(false)
-            }
-        };
-
-        getMovieById()
-    }, [selectedId]);
-
-    if (loading) return <div>Loading...</div>
-
-    return (
-        <div className="card">
-            <BasicButton
-                onClick={onCloseMovie}
-                type={'button'}
-                name={'<'}
-                className={'button--back'}
-            />
-            <div className="card__details details">
-                <div className="details__img-wrapper">
-                    <img src={poster} alt={title} className="details__img"/>
-                </div>
-                <div className="details__details">
-                    <h2 className="details__title">{title}</h2>
-                    <p className="details__timing">Year: {year}</p>
-                    <p className="details__genre">Genre: {genre}</p>
-                    <p className="details__rating">IMDb: {imdbRating}</p>
-                </div>
-            </div>
-            {!isMovieWatched ?
-                <>
-                    <StarRating
-                        maxRating={10}
-                        className={'card__rating'}
-                        onSetRating={setUserRating}
-                    />
-                    <BasicButton
-                        onClick={handleAdd}
-                        type={'button'}
-                        name={'+ Add to list'}
-                        className={'card__button button--yellow'}
-                    />
-                </> :
-
-                <div className="card__notification notification">
-                    <p className="notification__text">You rated with movie!</p>
-                </div>
-
-            }
-            <div className="card__description description">
-                <p className="description__text">{plot}</p>
-            </div>
-        </div>
-    )
-}
-
 
 export default App

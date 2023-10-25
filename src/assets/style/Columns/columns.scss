@@ -1,8 +1,11 @@
 .columns {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr;
     grid-row-gap: 20px;
     grid-column-gap: 20px;
     align-items: flex-start;
     margin: 50px 0;
+    @media(min-width: 1024px){
+        grid-template-columns: 2fr 1fr;
+    }
 }
