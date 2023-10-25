@@ -8,4 +8,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    &:before {
+        content: "";
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        display: block;
+        top: 50%;
+        left: -5px;
+        background: url(./arrow.svg) no-repeat center;
+        background-size: cover;
+        transform: translate(50%, -50%);
+    }
 }

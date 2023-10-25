@@ -2,4 +2,9 @@
     padding: 20px;
     background-color: var(--black-color);
     border-radius: var(--border-radius);
+    box-shadow: 3px 3px 10px rgba(25, 28, 31, 0.5);
+    order: 2;
+    @media (min-width: 1024px) {
+        order: 1
+    }
 }
